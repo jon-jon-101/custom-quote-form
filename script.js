@@ -23,6 +23,7 @@ const productDatabase = {
   }
 };
 
+
 // State: Track which products are currently in the form
 let activeProductsOnForm = [];
 
@@ -44,17 +45,6 @@ function initForm() {
 
 // Function to add a single dynamic product item
 function addProductItemToForm() {
-  const clone = productTemplate.content.cloneNode(true);
-  const productRowElement = clone.querySelector('.product-item');
-  
-  // Create a unique ID for this row's radio buttons
-  const rowId = Date.now(); 
-  const radios = productRowElement.querySelectorAll('input[type="radio"]');
-  
-  radios.forEach(radio => {
-    radio.name = "colors_" + rowId; // Gives each row a unique group name
-  });
-  
   // 1. Clone the template
   const clone = productTemplate.content.cloneNode(true);
   const productRowElement = clone.querySelector('.product-item');
@@ -98,12 +88,9 @@ function addProductItemToForm() {
 function updateProductRowTotals(productRowElement) {
   const selectedProduct = productRowElement.querySelector('.product-selector').value;
   const quantity = parseInt(productRowElement.querySelector('.quantity-input').value) || 0;
-    
-// Old way
-// const colorCount = parseInt(productRowElement.querySelector('.color-count:checked').value);
-
-// New, safer way to find the checked radio specifically inside THIS product row
-const colorCount = parseInt(productRowElement.querySelector('input[name="colors"]:checked').value);
+  
+  // Find which radio is checked
+  const colorCount = parseInt(productRowElement.querySelector('.color-count:checked').value);
   
   // Get data from the 'spreadsheet'
   const productData = productDatabase[selectedProduct];
