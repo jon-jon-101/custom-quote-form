@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Quote Form</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="main-container">
+
+        <div id="form-view" class="active-view">
+            <h1>Get an instant quote</h1>
+            <p class="intro-text">We've taken the hassle out of t-shirt printing pricing with this hand calculator. Get your quote in 30 seconds.</p>
+
+            <form id="quoteForm">
+                <h2>What products and quantities do you have in mind?</h2>
+
+                <div id="product-container"></div>
+
+                <template id="product-template">
+                    <div class="product-item">
+                        <div class="product-visuals">
+                            <img src="" alt="Product Preview" class="product-image">
+                        </div>
+                        <div class="product-controls">
+                            <label>Product type</label>
+                            <select class="product-selector"></select>
+
+                            <label>Quantity</label>
+                            <div class="quantity-counter">
+                                <button type="button" class="minus">-</button>
+                                <input type="number" class="quantity-input" value="25" min="1" step="1">
+                                <button type="button" class="plus">+</button>
+                            </div>
+
+                            <label>How many colours are in your design?</label>
+                            <div class="color-options">
+                                <label><input type="radio" class="color-count" value="1" checked><span>1 colour</span></label>
+                                <label><input type="radio" class="color-count" value="2"><span>2 colours</span></label>
+                                <label><input type="radio" class="color-count" value="3"><span>3 or more colours</span></label>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+
+                <div class="add-product-row">
+                    <button type="button" id="addAnotherProduct">
+                        <span class="plus-icon">+</span> Add another product
+                    </button>
+                </div>
+
+                <div class="additional-info-row">
+                    <label>Anything else you’d like us to know?</label>
+                    <textarea class="comment-box"></textarea>
+                </div>
+
+                <div class="contact-section">
+                    <h2>Who should we send the price list and info pack to?</h2>
+                    <div class="input-group">
+                        <input type="text" placeholder="First name" required>
+                        <input type="text" placeholder="Last name" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="email" placeholder="Email" required>
+                        <input type="tel" placeholder="Phone number">
+                    </div>
+                    <input type="text" placeholder="Company">
+                    
+                    <label>Organisation type</label>
+                    <select>
+                        <option value="Business">Business</option>
+                        <option value="Charity">Charity</option>
+                    </div>
+                    
+                </div>
+
+                <div class="submit-row">
+                    <button type="submit" id="calculatePriceButton">Calculate Price</button>
+                </div>
+            </form>
+        </div>
+
+        <div id="quote-view" class="hidden-view">
+            <h1>Your quote</h1>
+            <p class="intro-text">50 products made from premium quality organic cotton, printed by our experienced professionals in a renewable energy powered factory. Fast, personal service.</p>
+            
+            <div id="quote-items-container"></div>
+            
+            <div class="total-row">
+                <span class="total-label">Total cost:</span>
+                <span id="total-price" class="total-value">£0.00</span>
+            </div>
+
+            <div class="quote-details">
+                <h3>Your quote includes:</h3>
+                <ul>
+                    <li>SS quality sustainable printed products</li>
+                    <li>All print fees included</li>
+                    <li>Free artwork setup</li>
+                    <li>Fast personal service</li>
+                    <li>Dedicated account manager</li>
+                    <li>Free shipping to 1 UK address</li>
+                </ul>
+            </div>
+
+            <div class="action-row">
+                <button type="button" class="speak-to-team">Speak to our team</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
