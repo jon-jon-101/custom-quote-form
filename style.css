@@ -98,15 +98,18 @@ select, input[type="text"], input[type="email"], input[type="tel"], textarea {
 .submit-row, .action-row { text-align: center; margin-top: 40px; }
 
 #calculatePriceButton, .speak-to-team {
-    background-color: #8cc63f; /* Green from mockup */
-    color: #8cc63f;
+    background-color: #8cc63f;
+    color: white;
     border: none;
     padding: 15px 40px;
     font-size: 16px;
     font-weight: bold;
     border-radius: 4px;
     cursor: pointer;
-    transition: background 0.3s;
+    position: relative; /* Add this */
+    z-index: 10;        /* Add this */
+    display: inline-block; /* Add this */
+    margin-top: 20px;
 }
 
 /* Add Another Button */
