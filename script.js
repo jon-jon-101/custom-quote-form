@@ -87,9 +87,12 @@ function addProductItemToForm() {
 function updateProductRowTotals(productRowElement) {
   const selectedProduct = productRowElement.querySelector('.product-selector').value;
   const quantity = parseInt(productRowElement.querySelector('.quantity-input').value) || 0;
-  
-  // Find which radio is checked
-  const colorCount = parseInt(productRowElement.querySelector('.color-count:checked').value);
+    
+// Old way
+// const colorCount = parseInt(productRowElement.querySelector('.color-count:checked').value);
+
+// New, safer way to find the checked radio specifically inside THIS product row
+const colorCount = parseInt(productRowElement.querySelector('input[name="colors"]:checked').value);
   
   // Get data from the 'spreadsheet'
   const productData = productDatabase[selectedProduct];
