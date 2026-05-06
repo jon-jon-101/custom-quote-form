@@ -44,6 +44,18 @@ function initForm() {
 
 // Function to add a single dynamic product item
 function addProductItemToForm() {
+
+  const clone = productTemplate.content.cloneNode(true);
+  const productRowElement = clone.querySelector('.product-item');
+  
+  // Create a unique ID for this row's radio buttons
+  const rowId = Date.now(); 
+  const radios = productRowElement.querySelectorAll('input[type="radio"]');
+  
+  radios.forEach(radio => {
+    radio.name = "colors_" + rowId; // Gives each row a unique group name
+  });
+  
   // 1. Clone the template
   const clone = productTemplate.content.cloneNode(true);
   const productRowElement = clone.querySelector('.product-item');
