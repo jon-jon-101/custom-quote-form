@@ -95,23 +95,18 @@ select, input[type="text"], input[type="email"], input[type="tel"], textarea {
 .color-options input[type="radio"] { margin: 0; }
 
 /* Submit & Action Buttons */
-.submit-row, .action-row { text-align: center; margin-top: 40px; }
-
-#calculatePriceButton, .speak-to-team {
-    background-color: #8cc63f;
-    color: white;
-    border: none;
-    padding: 15px 40px;
-    font-size: 16px;
-    font-weight: bold;
-    border-radius: 4px;
-    cursor: pointer;
-    position: relative; /* Add this */
-    z-index: 10;        /* Add this */
-    display: inline-block; /* Add this */
-    margin-top: 20px;
+.submit-row {
+    display: block !important;
+    visibility: visible !important;
+    margin: 50px 0 !important;
+    text-align: center;
+    border: 2px solid red; /* REMOVE THIS once you see the button */
 }
 
+#calculatePriceButton {
+    display: inline-block !important;
+    opacity: 1 !important;
+}
 /* Add Another Button */
 .add-product-row { text-align: left; }
 #addAnotherProduct {
