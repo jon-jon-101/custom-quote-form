@@ -3,12 +3,12 @@
 const productDatabase = {
   "Organic Crew Neck T-shirt": {
     baseUnitPrice: 3.00,
-    imageUrl: "path/to/beige-tshirt.png", // Replace with your actual paths
+    imageUrl: "https://github.com/jon-jon-101/custom-quote-form/blob/main/sweatshirt-navy.png?raw=true", // Replace with your actual paths
     colorPremiums: { "1": 0, "2": 1.50, "3": 3.00 } // Price increases per color
   },
   "Organic Sweatshirt": {
     baseUnitPrice: 12.00,
-    imageUrl: "path/to/navy-sweatshirt.png",
+    imageUrl: "https://github.com/jon-jon-101/custom-quote-form/blob/main/sweatshirt-navy.png?raw=true",
     colorPremiums: { "1": 0, "2": 2.50, "3": 5.00 }
   }
 };
