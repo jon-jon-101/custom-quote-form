@@ -44,7 +44,6 @@ function initForm() {
 
 // Function to add a single dynamic product item
 function addProductItemToForm() {
-
   const clone = productTemplate.content.cloneNode(true);
   const productRowElement = clone.querySelector('.product-item');
   
