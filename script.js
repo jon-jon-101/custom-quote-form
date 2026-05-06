@@ -11,7 +11,7 @@ const productDatabase = {
     imageUrl: "https://github.com/jon-jon-101/custom-quote-form/blob/main/hoodie-stone.png?raw=true",
     colorPremiums: { "1": 0, "2": 2.50, "3": 5.00 }
     },
-  "Organic Sweatshirt": {
+  "Organic Sweatshirt Hello": {
     baseUnitPrice: 12.00,
     imageUrl: "https://github.com/jon-jon-101/custom-quote-form/blob/main/sweatshirt-navy.png?raw=true",
     colorPremiums: { "1": 0, "2": 2.50, "3": 5.00 }
