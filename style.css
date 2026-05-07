@@ -96,16 +96,27 @@ select, input[type="text"], input[type="email"], input[type="tel"], textarea {
 
 /* Submit & Action Buttons */
 .submit-row {
-    display: block !important;
-    visibility: visible !important;
-    margin: 50px 0 !important;
     text-align: center;
-    border: 2px solid red; /* REMOVE THIS once you see the button */
+    margin: 40px 0;
 }
 
 #calculatePriceButton {
-    display: inline-block !important;
-    opacity: 1 !important;
+    background-color: #8CC63F !important; /* The specific mockup green */
+    color: #FFFFFF !important;            /* Pure white text */
+    padding: 16px 40px;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: auto;
+    min-width: 200px;
+    transition: background-color 0.2s ease;
+}
+
+#calculatePriceButton:hover {
+    background-color: #7db337 !important; /* Slightly darker on hover */
+}
 }
 /* Add Another Button */
 .add-product-row { text-align: left; }
