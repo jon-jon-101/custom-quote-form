@@ -1,5 +1,5 @@
 // 1. URL FIX: Ensure this ends with output=csv so PapaParse can read it!
-const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSS1oZIfz6jaKnthfkeFwrEHNbipyntQYgHBWaiJ3Sk_bKdelfdyCQY2pxiElWd_wwe6iYlRDmGvuzQ/pub?output=csv";
+const sheetUrl = "https://docs.google.com/spreadsheets/d/1XWk89YC9ghE1foClJ9529Lqh-fgBJ0Xx6rAIr6QINUQ/export?format=csv.";
 
 let pricingData = []; 
 let activeProductsOnForm = [];
@@ -14,27 +14,36 @@ const mainForm = document.getElementById('quoteForm');
 
 // START: Load data first
 async function loadSheetData() {
-    const proxiedUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(sheetUrl)}`;
-
-    Papa.parse(proxiedUrl, {
+    // We use a different proxy approach that is often more stable for Google Sheets
+    const directCsvUrl = sheetUrl; 
+    
+    Papa.parse(directCsvUrl, {
         download: true,
         header: true,
-        skipEmptyLines: true, // New: ignores the empty rows in your screenshot
+        skipEmptyLines: true,
         complete: function(results) {
-            // Clean the data: remove £ symbols and convert text to numbers
-            pricingData = results.data.map(row => {
-                const cleanRow = { ...row };
-                ['Color1Price', 'Color2Price', 'Color3Price'].forEach(key => {
-                    if (cleanRow[key]) {
-                        // This removes £ and commas so 5.91 is a real number
-                        cleanRow[key] = cleanRow[key].replace(/[£,]/g, '');
-                    }
-                });
-                return cleanRow;
-            }).filter(row => row.Product && row.Product.trim() !== "");
-
-            console.log("Cleaned Data:", pricingData);
-            initForm();
+            // Clean and filter the data
+            pricingData = results.data.filter(row => row.Product && row.Product.trim() !== "");
+            
+            if (pricingData.length === 0) {
+                console.error("Spreadsheet loaded but no products were found. Check your column headers!");
+            } else {
+                console.log("Success! Data loaded:", pricingData);
+                initForm();
+            }
+        },
+        error: function(err) {
+            console.error("PapaParse failed to get the file. Trying Proxy fallback...");
+            // Fallback to proxy if direct access fails
+            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(directCsvUrl)}`;
+            Papa.parse(proxyUrl, {
+                download: true,
+                header: true,
+                complete: function(res) {
+                    pricingData = res.data.filter(row => row.Product);
+                    initForm();
+                }
+            });
         }
     });
 }
