@@ -45,18 +45,24 @@ function initForm() {
 
 // Function to add a single dynamic product item
 function addProductItemToForm() {
-  // 1. Clone the template
+function addProductItemToForm() {
   const clone = productTemplate.content.cloneNode(true);
   const productRowElement = clone.querySelector('.product-item');
+  
+  // 1. Create a unique ID based on the current time
+  const uniqueId = Date.now(); 
 
-  // 2. Populate the product dropdown dynamically
-  const select = productRowElement.querySelector('.product-selector');
-  for (const productName in productDatabase) {
-    const option = document.createElement('option');
-    option.value = productName;
-    option.text = productName;
-    select.appendChild(option);
-  }
+  // 2. Find the radio buttons in this specific clone and give them a unique name
+  const radios = productRowElement.querySelectorAll('input[type="radio"]');
+  radios.forEach(radio => {
+    radio.name = "color_group_" + uniqueId; 
+  });
+
+  // ... (the rest of your existing logic for dropdowns and listeners) ...
+  
+  productContainer.appendChild(productRowElement);
+  activeProductsOnForm.push(productRowElement);
+}
 
   // 3. Attach standard interaction handlers to this cloned item
   const quantityInput = productRowElement.querySelector('.quantity-input');
