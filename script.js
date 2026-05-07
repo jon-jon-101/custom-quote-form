@@ -58,6 +58,12 @@ function addProductItemToForm() {
     radio.name = "color_group_" + uniqueId; 
   });
 
+  // ... (the rest of your existing logic for dropdowns and listeners) ...
+  
+  productContainer.appendChild(productRowElement);
+  activeProductsOnForm.push(productRowElement);
+}
+
   // 3. Attach standard interaction handlers to this cloned item
   const quantityInput = productRowElement.querySelector('.quantity-input');
   const plusBtn = productRowElement.querySelector('.plus');
