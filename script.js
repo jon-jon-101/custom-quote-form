@@ -45,7 +45,7 @@ function initForm() {
 
 // Function to add a single dynamic product item
 function addProductItemToForm() {
-function addProductItemToForm() {
+
   const clone = productTemplate.content.cloneNode(true);
   const productRowElement = clone.querySelector('.product-item');
   
@@ -58,7 +58,7 @@ function addProductItemToForm() {
     radio.name = "color_group_" + uniqueId; 
   });
 
-}
+
 
   // 3. Attach standard interaction handlers to this cloned item
   const quantityInput = productRowElement.querySelector('.quantity-input');
