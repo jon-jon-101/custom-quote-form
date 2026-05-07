@@ -1,31 +1,29 @@
-// Step 1: Simulate the Spreadsheet Data.
-// In reality, this data would be *fetched* from your source.
-const productDatabase = {
-  "Organic Crew Neck T-shirt": {
-    baseUnitPrice: 3.00,
-    imageUrl: "https://github.com/jon-jon-101/custom-quote-form/blob/main/t-shirt-oat.png?raw=true", // Replace with your actual paths
-    colorPremiums: { "1": 0, "2": 1.50, "3": 3.00 } // Price increases per color
-  },
-  "Organic Pullover Hoodie": {
-    baseUnitPrice: 12.00,
-    imageUrl: "https://github.com/jon-jon-101/custom-quote-form/blob/main/hoodie-stone.png?raw=true",
-    colorPremiums: { "1": 0, "2": 2.50, "3": 5.00 }
-    },
-  "Organic Sweatshirt": {
-    baseUnitPrice: 12.00,
-    imageUrl: "https://github.com/jon-jon-101/custom-quote-form/blob/main/sweatshirt-navy.png?raw=true",
-    colorPremiums: { "1": 0, "2": 2.50, "3": 5.00 }
-    },
-  "Organic Cotton Tote Bag": {
-    baseUnitPrice: 12.00,
-    imageUrl: "https://github.com/jon-jon-101/custom-quote-form/blob/main/tote-natural.png?raw=true",
-    colorPremiums: { "1": 0, "2": 2.50, "3": 5.00 }
-  }
-};
+// 1. The link to your published Google Sheet CSV
+const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSS1oZIfz6jaKnthfkeFwrEHNbipyntQYgHBWaiJ3Sk_bKdelfdyCQY2pxiElWd_wwe6iYlRDmGvuzQ/pubhtml";
 
+// 2. This starts as an empty list and gets filled by the spreadsheet
+let pricingData = []; 
 
 // State: Track which products are currently in the form
 let activeProductsOnForm = [];
+
+// This function downloads the spreadsheet and then starts the form
+async function loadSheetData() {
+    Papa.parse(sheetUrl, {
+        download: true,
+        header: true,
+        complete: function(results) {
+            // Store the spreadsheet data in our pricingData variable
+            pricingData = results.data.filter(row => row.Product);
+            
+            // Now that we have the data, we can build the form
+            initForm();
+        }
+    });
+}
+
+// Tell the browser to start loading the sheet as soon as the page opens
+document.addEventListener('DOMContentLoaded', loadSheetData);
 
 // DOM Elements
 const productContainer = document.getElementById('product-container');
@@ -48,36 +46,46 @@ function addProductItemToForm() {
     const clone = productTemplate.content.cloneNode(true);
     const productRowElement = clone.querySelector('.product-item');
     
-    // Give this specific row a unique ID
+    // 1. Give this specific row a unique ID for the radio buttons
     const rowId = Date.now() + Math.random(); 
-    
-    // Find radio buttons and give them a unique group name for this row
     const radios = productRowElement.querySelectorAll('input[type="radio"]');
     radios.forEach(radio => {
         radio.name = "colors_" + rowId;
     });
 
-    // Set up the dropdown options from your database
+    // 2. Populate the product dropdown with UNIQUE names from the spreadsheet
     const select = productRowElement.querySelector('.product-selector');
-    for (const productName in productDatabase) {
+    const uniqueProducts = [...new Set(pricingData.map(item => item.Product))];
+
+    uniqueProducts.forEach(productName => {
         const option = document.createElement('option');
         option.value = productName;
         option.text = productName;
         select.appendChild(option);
-    }
+    });
 
-    // Attach quantity button listeners
+    // 3. Attach quantity button listeners
     const quantityInput = productRowElement.querySelector('.quantity-input');
     productRowElement.querySelector('.plus').addEventListener('click', () => { 
         quantityInput.stepUp(); 
+        updateProductRowVisuals(productRowElement); // Update image/price if needed
     });
     productRowElement.querySelector('.minus').addEventListener('click', () => { 
         quantityInput.stepDown(); 
+        updateProductRowVisuals(productRowElement);
     });
 
-    // Add the new row to the page and our tracking list
+    // 4. Update the image immediately when the dropdown changes
+    select.addEventListener('change', () => {
+        updateProductRowVisuals(productRowElement);
+    });
+
+    // 5. Add to the page
     productContainer.appendChild(productRowElement);
     activeProductsOnForm.push(productRowElement);
+    
+    // Set initial image for this new row
+    updateProductRowVisuals(productRowElement);
 }
 
 // --- Dynamic Calculation Core Logic ---
@@ -122,46 +130,55 @@ mainForm.addEventListener('submit', (e) => {
 });
 
 function generateQuoteResponse() {
-  const quoteItemsContainer = document.getElementById('quote-items-container');
-  quoteItemsContainer.innerHTML = ''; // Clear previous
-  
-  let grandTotal = 0;
-  let totalProductsCount = 0;
+    const quoteItemsContainer = document.getElementById('quote-items-container');
+    quoteItemsContainer.innerHTML = ''; // Clear previous
+    
+    let grandTotal = 0;
 
-  // Process each product from the form
-  activeProductsOnForm.forEach(productRowElement => {
-    const selectedProduct = productRowElement.querySelector('.product-selector').value;
-    const quantity = parseInt(productRowElement.querySelector('.quantity-input').value) || 0;
-    const colorCount = parseInt(productRowElement.querySelector('.color-count:checked').value);
+    activeProductsOnForm.forEach(productRowElement => {
+        const selectedProduct = productRowElement.querySelector('.product-selector').value;
+        const quantity = parseInt(productRowElement.querySelector('.quantity-input').value) || 0;
+        
+        // Find the checked radio button specifically in this row
+        const checkedRadio = productRowElement.querySelector('input[type="radio"]:checked');
+        const colorCount = checkedRadio ? checkedRadio.value : "1";
+        
+        // --- STEP 4 LOGIC STARTS HERE ---
+        // Find the correct row in your spreadsheet based on Product + Quantity
+        const bracket = pricingData.find(row => 
+            row.Product === selectedProduct && 
+            quantity >= parseInt(row.MinQty) && 
+            quantity <= parseInt(row.MaxQty)
+        );
+
+        // If we found a match in the spreadsheet, calculate the price
+        if (bracket) {
+            const unitPrice = parseFloat(bracket[`Color${colorCount}Price`]);
+            const lineTotal = unitPrice * quantity;
+            grandTotal += lineTotal;
+
+            const quoteItemHTML = `
+                <div class="quote-response-item">
+                    <img src="${bracket.ImageURL}" class="product-image" style="width: 100px;">
+                    <div class="item-meta">
+                        <h4>${selectedProduct}</h4>
+                        <div>${colorCount} colour print</div>
+                        <div>Unit price £${unitPrice.toFixed(2)}</div>
+                        <div>Quantity x ${quantity}</div>
+                    </div>
+                    <div class="line-price">£${lineTotal.toFixed(2)}</div>
+                </div>
+                <div class="divider"></div>
+            `;
+            quoteItemsContainer.insertAdjacentHTML('beforeend', quoteItemHTML);
+        } else {
+            console.error("No price bracket found for:", selectedProduct, "at quantity:", quantity);
+        }
+    });
     
-    // Get database info
-    const productData = productDatabase[selectedProduct];
-    
-    // Line item calculation
-    const calculatedUnitPrice = productData.baseUnitPrice + productData.colorPremiums[colorCount];
-    const lineTotal = calculatedUnitPrice * quantity;
-    
-    // Update grand total
-    grandTotal += lineTotal;
-    totalProductsCount += quantity;
-    
-    // Dynamic Quote Row Template (Hardcoded here for clarity)
-    const quoteItemHTML = `
-        <div class="quote-response-item">
-            <img src="${productData.imageUrl}" class="product-image">
-            <div class="item-meta">
-                <h4>${selectedProduct}</h4>
-                <div>${colorCount} colour print</div>
-                <div>Unit price £${calculatedUnitPrice.toFixed(2)}</div>
-                <div>Quantity x ${quantity}</div>
-            </div>
-            <div class="line-price">£${lineTotal.toFixed(2)}</div>
-        </div>
-        <div class="divider"></div>
-    `;
-    
-    quoteItemsContainer.insertAdjacentHTML('beforeend', quoteItemHTML);
-  });
+    // Update the final total display
+    document.getElementById('total-price').innerText = `£${grandTotal.toFixed(2)}`;
+}
   
   // Final summary update
   document.getElementById('total-price').innerText = `£${grandTotal.toFixed(2)}`;
@@ -169,3 +186,15 @@ function generateQuoteResponse() {
 
 // Add another product handler
 addProductButton.addEventListener('click', addProductItemToForm);
+
+function updateProductRowVisuals(productRowElement) {
+    const selectedProduct = productRowElement.querySelector('.product-selector').value;
+    const productImage = productRowElement.querySelector('.product-image');
+    
+    // Find the first row in the spreadsheet that matches this product to get the image
+    const productInfo = pricingData.find(row => row.Product === selectedProduct);
+    
+    if (productInfo && productInfo.ImageURL) {
+        productImage.src = productInfo.ImageURL;
+    }
+}
