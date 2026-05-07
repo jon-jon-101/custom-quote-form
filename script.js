@@ -45,39 +45,41 @@ function initForm() {
 
 // Function to add a single dynamic product item
 function addProductItemToForm() {
-    const clone = productTemplate.content.cloneNode(true);
-    const productRowElement = clone.querySelector('.product-item');
-    
-    // Give this specific row a unique ID
-    const rowId = Date.now() + Math.random(); 
-    
-    // Find radio buttons and give them a unique group name for this row
-    const radios = productRowElement.querySelectorAll('input[type="radio"]');
-    radios.forEach(radio => {
-        radio.name = "colors_" + rowId;
-    });
+function addProductItemToForm() {
+  const clone = productTemplate.content.cloneNode(true);
+  const productRowElement = clone.querySelector('.product-item');
+  
+  // 1. Create a unique ID based on the current time
+  const uniqueId = Date.now(); 
 
-    // Set up the dropdown options from your database
-    const select = productRowElement.querySelector('.product-selector');
-    for (const productName in productDatabase) {
-        const option = document.createElement('option');
-        option.value = productName;
-        option.text = productName;
-        select.appendChild(option);
-    }
+  // 2. Find the radio buttons in this specific clone and give them a unique name
+  const radios = productRowElement.querySelectorAll('input[type="radio"]');
+  radios.forEach(radio => {
+    radio.name = "color_group_" + uniqueId; 
+  });
 
-    // Attach quantity button listeners
-    const quantityInput = productRowElement.querySelector('.quantity-input');
-    productRowElement.querySelector('.plus').addEventListener('click', () => { 
-        quantityInput.stepUp(); 
-    });
-    productRowElement.querySelector('.minus').addEventListener('click', () => { 
-        quantityInput.stepDown(); 
-    });
+  // 3. Attach standard interaction handlers to this cloned item
+  const quantityInput = productRowElement.querySelector('.quantity-input');
+  const plusBtn = productRowElement.querySelector('.plus');
+  const minusBtn = productRowElement.querySelector('.minus');
 
-    // Add the new row to the page and our tracking list
-    productContainer.appendChild(productRowElement);
-    activeProductsOnForm.push(productRowElement);
+  plusBtn.addEventListener('click', () => { quantityInput.stepUp(); updateProductRowTotals(productRowElement); });
+  minusBtn.addEventListener('click', () => { quantityInput.stepDown(); updateProductRowTotals(productRowElement); });
+  quantityInput.addEventListener('input', () => updateProductRowTotals(productRowElement));
+  
+  select.addEventListener('change', () => updateProductRowTotals(productRowElement));
+  
+  const colorRadios = productRowElement.querySelectorAll('.color-count');
+  colorRadios.forEach(radio => radio.addEventListener('change', () => updateProductRowTotals(productRowElement)));
+
+  // 4. Set initial data
+  updateProductRowTotals(productRowElement);
+
+  // 5. Finally, append to the document
+  productContainer.appendChild(productRowElement);
+  
+  // Track this dynamic element
+  activeProductsOnForm.push(productRowElement);
 }
 
 // --- Dynamic Calculation Core Logic ---
