@@ -1,5 +1,5 @@
-// 1. URL FIX: Ensure this ends with output=csv so PapaParse can read it!
-const sheetUrl = "https://docs.google.com/spreadsheets/d/1XWk89YC9ghE1foClJ9529Lqh-fgBJ0Xx6rAIr6QINUQ/export?format=csv.";
+// 1. Point to the file you just created on GitHub
+const sheetUrl = "data.csv"; 
 
 let pricingData = []; 
 let activeProductsOnForm = [];
@@ -12,41 +12,34 @@ const formView = document.getElementById('form-view');
 const quoteView = document.getElementById('quote-view');
 const mainForm = document.getElementById('quoteForm');
 
-// START: Load data first
+// 2. Simplified Loading Function
 async function loadSheetData() {
-    // We use a different proxy approach that is often more stable for Google Sheets
-    const directCsvUrl = sheetUrl; 
-    
-    Papa.parse(directCsvUrl, {
+    // No more proxies needed! Just a direct read.
+    Papa.parse(sheetUrl, {
         download: true,
         header: true,
         skipEmptyLines: true,
         complete: function(results) {
-            // Clean and filter the data
+            // Filter and clean the data
             pricingData = results.data.filter(row => row.Product && row.Product.trim() !== "");
             
-            if (pricingData.length === 0) {
-                console.error("Spreadsheet loaded but no products were found. Check your column headers!");
-            } else {
-                console.log("Success! Data loaded:", pricingData);
-                initForm();
-            }
+            // Clean prices of any leftover £ symbols just in case
+            pricingData.forEach(row => {
+                ['Color1Price', 'Color2Price', 'Color3Price'].forEach(key => {
+                    if (row[key]) row[key] = row[key].replace(/[£,]/g, '');
+                });
+            });
+
+            console.log("Data loaded successfully from GitHub!");
+            initForm();
         },
         error: function(err) {
-            console.error("PapaParse failed to get the file. Trying Proxy fallback...");
-            // Fallback to proxy if direct access fails
-            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(directCsvUrl)}`;
-            Papa.parse(proxyUrl, {
-                download: true,
-                header: true,
-                complete: function(res) {
-                    pricingData = res.data.filter(row => row.Product);
-                    initForm();
-                }
-            });
+            console.error("Error reading data.csv:", err);
         }
     });
 }
+
+document.addEventListener('DOMContentLoaded', loadSheetData);
 
 document.addEventListener('DOMContentLoaded', loadSheetData);
 
