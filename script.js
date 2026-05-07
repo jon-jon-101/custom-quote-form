@@ -14,19 +14,27 @@ const mainForm = document.getElementById('quoteForm');
 
 // START: Load data first
 async function loadSheetData() {
-    // We add a proxy service (allorigins) to the front of your URL to bypass the security block
     const proxiedUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(sheetUrl)}`;
 
     Papa.parse(proxiedUrl, {
         download: true,
         header: true,
+        skipEmptyLines: true, // New: ignores the empty rows in your screenshot
         complete: function(results) {
-            pricingData = results.data.filter(row => row.Product);
-            console.log("Data successfully loaded:", pricingData);
+            // Clean the data: remove £ symbols and convert text to numbers
+            pricingData = results.data.map(row => {
+                const cleanRow = { ...row };
+                ['Color1Price', 'Color2Price', 'Color3Price'].forEach(key => {
+                    if (cleanRow[key]) {
+                        // This removes £ and commas so 5.91 is a real number
+                        cleanRow[key] = cleanRow[key].replace(/[£,]/g, '');
+                    }
+                });
+                return cleanRow;
+            }).filter(row => row.Product && row.Product.trim() !== "");
+
+            console.log("Cleaned Data:", pricingData);
             initForm();
-        },
-        error: function(err) {
-            console.error("Error loading spreadsheet:", err);
         }
     });
 }
@@ -126,9 +134,10 @@ function generateQuoteResponse() {
         );
 
         if (bracket) {
-            const unitPrice = parseFloat(bracket[`Color${colorCount}Price`]);
-            const lineTotal = unitPrice * quantity;
-            grandTotal += lineTotal;
+    // We use parseFloat to ensure the price is treated as a number for the math
+    const unitPrice = parseFloat(bracket[`Color${colorCount}Price`]);
+    const lineTotal = unitPrice * quantity;
+    grandTotal += lineTotal;
 
             const quoteItemHTML = `
                 <div class="quote-response-item">
