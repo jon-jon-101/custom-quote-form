@@ -14,13 +14,19 @@ const mainForm = document.getElementById('quoteForm');
 
 // START: Load data first
 async function loadSheetData() {
-    Papa.parse(sheetUrl, {
+    // We add a proxy service (allorigins) to the front of your URL to bypass the security block
+    const proxiedUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(sheetUrl)}`;
+
+    Papa.parse(proxiedUrl, {
         download: true,
         header: true,
         complete: function(results) {
             pricingData = results.data.filter(row => row.Product);
-            console.log("Data loaded:", pricingData); // Useful for debugging
+            console.log("Data successfully loaded:", pricingData);
             initForm();
+        },
+        error: function(err) {
+            console.error("Error loading spreadsheet:", err);
         }
     });
 }
