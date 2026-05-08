@@ -160,3 +160,25 @@ function generateQuoteResponse() {
     
     document.getElementById('total-price').innerText = `£${grandTotal.toFixed(2)}`;
 }
+
+function updateLiveUnitPrice(productRowElement) {
+    const selectedProduct = productRowElement.querySelector('.product-selector').value;
+    const quantity = parseInt(productRowElement.querySelector('.quantity-input').value) || 0;
+    const checkedRadio = productRowElement.querySelector('input[type="radio"]:checked');
+    const colorCount = checkedRadio ? checkedRadio.value : "1";
+    const displayElement = productRowElement.querySelector('.unit-price-value');
+
+    // Find the correct bracket in our data
+    const bracket = pricingData.find(row => 
+        row.Product === selectedProduct && 
+        quantity >= parseInt(row.MinQty) && 
+        quantity <= parseInt(row.MaxQty)
+    );
+
+    if (bracket && displayElement) {
+        const unitPrice = parseFloat(bracket[`Color${colorCount}Price`]);
+        displayElement.innerText = `£${unitPrice.toFixed(2)}`;
+    } else {
+        displayElement.innerText = "£0.00";
+    }
+}
