@@ -113,6 +113,25 @@ select, input[type="text"], input[type="email"], input[type="tel"], textarea {
 
 .color-options input[type="radio"] { margin: 0; }
 
+/* Space after the "Add another product" section */
+.add-product-row {
+    margin-bottom: 40px; /* Increase this number for more space */
+    margin-top: 20px;
+}
+
+/* Space before the "Anything else" label */
+.notes-section {
+    margin-top: 30px;
+}
+
+/* Ensure the textarea itself has some room */
+textarea {
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+}
+
 /* Submit & Action Buttons */
 .submit-row {
     text-align: center;
