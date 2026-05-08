@@ -44,7 +44,18 @@ select, input[type="text"], input[type="email"], input[type="tel"], textarea {
 }
 
 .product-visuals { text-align: center; }
-.product-image { max-width: 150px; height: auto; }
+.product-image {
+    width: 130px; /* Adjust this number based on your current size */
+    height: auto;
+    margin-bottom: 5px;
+    transition: transform 0.3s ease; /* Optional: smooth resize */
+}
+
+/* Ensure the container allows for a wider image */
+.product-visuals {
+    min-width: 180px; 
+    flex-shrink: 0;   /* Prevents the image from squishing on small screens */
+}
 
 .product-controls label { font-weight: bold; color: #333; }
 .product-selector { cursor: pointer; }
