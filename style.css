@@ -152,6 +152,19 @@ select, input[type="text"], input[type="email"], input[type="tel"], textarea {
     align-items: center;
 }
 
+.live-price-display {
+    font-size: 14px;
+    color: #8CC63F; /* Your brand green */
+    font-weight: bold;
+    margin-top: 10px;
+    padding: 5px 0;
+}
+
+.unit-price-value {
+    font-size: 18px; /* Make the actual number pop slightly */
+}
+
+
 /* View Switching */
 .hidden-view { display: none; }
 .active-view { display: block; }
