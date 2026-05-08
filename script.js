@@ -89,6 +89,40 @@ function addProductItemToForm() {
     activeProductsOnForm.push(productRowElement);
     
     updateProductRowVisuals(productRowElement);
+
+    const quantityInput = productRowElement.querySelector('.quantity-input');
+const select = productRowElement.querySelector('.product-selector');
+const radios = productRowElement.querySelectorAll('input[type="radio"]');
+
+// 1. Listen for plus/minus clicks
+productRowElement.querySelector('.plus').addEventListener('click', () => { 
+    updateLiveUnitPrice(productRowElement); 
+});
+productRowElement.querySelector('.minus').addEventListener('click', () => { 
+    updateLiveUnitPrice(productRowElement); 
+});
+
+// 2. Listen for typing in the quantity box
+quantityInput.addEventListener('input', () => {
+    updateLiveUnitPrice(productRowElement);
+});
+
+// 3. Listen for product changes
+select.addEventListener('change', () => {
+    updateLiveUnitPrice(productRowElement);
+});
+
+// 4. Listen for radio button (color) changes
+radios.forEach(radio => {
+    radio.addEventListener('change', () => {
+        updateLiveUnitPrice(productRowElement);
+    });
+});
+
+// Run once at start so it isn't £0.00 initially
+updateLiveUnitPrice(productRowElement);
+
+    
 }
 
 function updateProductRowVisuals(productRowElement) {
