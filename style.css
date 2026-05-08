@@ -46,7 +46,7 @@ select, input[type="text"], input[type="email"], input[type="tel"], textarea {
 .product-visuals { text-align: center; }
 /* Target the image specifically within the visuals container */
 .product-visuals img.product-image {
-    width: 300px !important;     /* Bumped up from ~120px to be ~30% bigger */
+    width: 220px !important;     /* Bumped up from ~120px to be ~30% bigger */
     height: auto !important;
     max-width: none !important;  /* Prevents the container from squishing it */
     display: block;
@@ -55,7 +55,7 @@ select, input[type="text"], input[type="email"], input[type="tel"], textarea {
 
 /* Make sure the container is wide enough to hold the bigger image */
 .product-visuals {
-    width: 300px !important;     /* Adjusted to accommodate the 160px image */
+    width: 220px !important;     /* Adjusted to accommodate the 160px image */
     flex-shrink: 0;
 }
 
